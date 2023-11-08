@@ -8,9 +8,10 @@ In order to do this assignment, we need to implement priority scheduling sans pr
 
 ## STEP 1: Priority Scheduler
 
+## STEP 2: MFQS (likely will be broken up into more steps)
 
-
-Sometime before we hand in this assignment, we need to meet and come up with potential ideas for A3. Semester is really busy, but hopefully we'll be able to do something really, really cool. He said no file system stuff. I will try to come up with some rudimentary ideas in the interim.
+## STEP N. Post-A2
+Sometime around when we hand in this assignment, we need to meet and come up with potential ideas for A3. Semester is really busy, but hopefully we'll be able to do something really, really cool. He said no file system stuff. I will try to come up with some rudimentary ideas in the interim.
 
 
 # Problem Statement
