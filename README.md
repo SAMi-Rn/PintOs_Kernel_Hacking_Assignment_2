@@ -32,6 +32,7 @@ PintOS has a flat Round Robin scheduler as shown above. We need to implement pri
 MLFQS works by dynamically recalculating the priorities of every thread every fourth clock tick. It does so with a very careful set of equations that ensures starvation is limited and that threads hogging too much CPU aren't always the highest priority. Below are steps that need to be done to implement this:
 
 1. We must implement helper functions that let us do [Fixed-Point Real Arithmetic](https://web.stanford.edu/class/cs140/projects/pintos/pintos_7.html#SEC137). This, to me atleast, seems the hardest part of the assignment. The rest is just procedural and might cause issues w.r.t. debugging but that's it. 
+
 2. Modify the thread struct found in thread.h to have the field "nice." In the thread_create function, initialize the niceness to either zero or the same as its parent thread. Additionally, there exist method stubs for the following functions in thread.c (we must implement them):
     - Function: int thread_get_nice (void)
         - Returns the current thread's nice value. 
@@ -40,9 +41,10 @@ MLFQS works by dynamically recalculating the priorities of every thread every fo
 3. Create a new global integer variable "load_avg" that is assigned to 0 at OS boot. 
     - Modify timer_interrupt, or thread_tick, to recalculate it every second (or in other words every time that timer_ticks () % TIMER_FREQ == 0), using the below formula: 
      <div style="text-align:center"><img src="load_avg_equation.png"/></div> 
-    - NOTE: As apart of the above requirement, we have to implement the following method stub in thread.c:
-        - Function: int thread_get_load_avg (void)
-            - Returns 100 times the current system load average, rounded to the nearest integer. 
+NOTE: As apart of the above requirement, we have to implement the following method stub in thread.c:
+- Function: int thread_get_load_avg (void)
+    - Returns 100 times the current system load average, rounded to the nearest integer. 
+
 3. Modify the thread struct found in thread.h to have the field "recent_cpu." 
     - In the thread_create function, initialize the recent_cpu to either zero or its parent's value (if it has a parent thread).
     - Every single time that a timer_interrupt occurs, for the currently running thread (unless it is the idle thread), we must increment recent_cpu by 1. 
