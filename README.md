@@ -39,17 +39,15 @@ MLFQS works by dynamically recalculating the priorities of every thread every fo
         - Sets the current thread's nice value to new_nice and recalculates the thread's priority based on the new value. If the running thread no longer has the highest priority, yields. 
 3. Create a new global integer variable "load_avg" that is assigned to 0 at OS boot. 
     - Modify timer_interrupt, or thread_tick, to recalculate it every second (or in other words every time that timer_ticks () % TIMER_FREQ == 0), using the below formula: 
-
      <div style="text-align:center"><img src="load_avg_equation.png"/></div> 
-
- - NOTE: As apart of the above requirement, we have to implement the following method stub in thread.c:
-    - Function: int thread_get_load_avg (void)
-        - Returns 100 times the current system load average, rounded to the nearest integer. 
+    - NOTE: As apart of the above requirement, we have to implement the following method stub in thread.c:
+        - Function: int thread_get_load_avg (void)
+            - Returns 100 times the current system load average, rounded to the nearest integer. 
 3. Modify the thread struct found in thread.h to have the field "recent_cpu." 
     - In the thread_create function, initialize the recent_cpu to either zero or its parent's value (if it has a parent thread).
     - Every single time that a timer_interrupt occurs, for the currently running thread (unless it is the idle thread), we must increment recent_cpu by 1. 
     - Every second (or in other words every time that timer_ticks () % TIMER_FREQ == 0), we must recalculate the recent_cpu for every thread (ASIDE: this is to implement "decay" on threads that have not ran in a while, such that we can limit starvation) with the following formula:
-    
+
     <div style="text-align:center"><img src="recent_cpu_equation.png"/></div>
 
 At this point, if all of the above requirements are met, we have a functioning MLFQS. 
