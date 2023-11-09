@@ -5,6 +5,9 @@ Implementation of Stanford's 2.2.4* Advanced Scheduler for PintOS — a multilev
 
 We will also reference the "BSD" book where this MLFQS implementation was first proposed (found as an appendix in the above Stanford page). I split that textbook into a PDF with _just_ the **process scheduler** section that we need.
 
+# Problem Statement
+Stanford's PintOS assignment: [2.2.4](https://web.stanford.edu/class/cs140/projects/pintos/pintos_2.html#SEC27)
+
 # TODO (rough notes on how to start)
 In order to do this assignment, we need to implement priority scheduling sans priority donation (seems to suggest priority inversion is not a problem for MLFQS) as described in [2.2.3](https://web.stanford.edu/class/cs140/projects/pintos/pintos_2.html#SEC26) before we can start on [2.2.4](https://web.stanford.edu/class/cs140/projects/pintos/pintos_2.html#SEC27) — the actual assignment. 
 
@@ -30,15 +33,17 @@ MLFQS works by dynamically recalculating the priorities of every thread every fo
 
 1. We must implement helper functions that let us do [Fixed-Point Real Arithmetic](https://web.stanford.edu/class/cs140/projects/pintos/pintos_7.html#SEC137). This, to me atleast, seems the hardest part of the assignment. The rest is just procedural and might cause issues w.r.t. debugging but that's it. 
 2. Modify the thread struct found in thread.h to have the field "nice." In the thread_create function, initialize the niceness to either zero or the same as its parent thread. Additionally, there exist method stubs for the following functions in thread.c (we must implement them):
--Function: int thread_get_nice (void)
-    Returns the current thread's nice value. 
--Function: void thread_set_nice (int new_nice)
-     Sets the current thread's nice value to new_nice and recalculates the thread's priority based on the new value. If the running thread no longer has the highest priority, yields. 
-3. Create a new global integer variable "load_avg" that is assigned to 0 at OS boot. Modify timer_interrupt, or thread_tick, to recalculate it every second (or in other words every time that timer_ticks () % TIMER_FREQ == 0), using the below formula:
-    <div style="text-align:center"><img src="load_avg_equation.png"/></div>
-NOTE: As apart of the above requirement, we have to implement the following method stub in thread.c:
+    - Function: int thread_get_nice (void)
+        - Returns the current thread's nice value. 
+    - Function: void thread_set_nice (int new_nice)
+        - Sets the current thread's nice value to new_nice and recalculates the thread's priority based on the new value. If the running thread no longer has the highest priority, yields. 
+3. Create a new global integer variable "load_avg" that is assigned to 0 at OS boot. 
+ - Modify timer_interrupt, or thread_tick, to recalculate it every second (or in other words every time that timer_ticks () % TIMER_FREQ == 0), using the below formula: 
+ <div style="text-align:center"><img src="load_avg_equation.png"/></div> 
+
+ - NOTE: As apart of the above requirement, we have to implement the following method stub in thread.c:
     - Function: int thread_get_load_avg (void)
-        Returns 100 times the current system load average, rounded to the nearest integer. 
+        - Returns 100 times the current system load average, rounded to the nearest integer. 
 3. Modify the thread struct found in thread.h to have the field "recent_cpu." 
     - In the thread_create function, initialize the recent_cpu to either zero or its parent's value (if it has a parent thread).
     - Every single time that a timer_interrupt occurs, for the currently running thread (unless it is the idle thread), we must increment recent_cpu by 1. 
@@ -50,10 +55,6 @@ At this point, if all of the above requirements are met, we have a functioning M
 
 ## STEP N. Post-A2-B4-Deadline
 Sometime around when we hand in this assignment, we need to meet and come up with potential ideas for A3. Semester is really busy, but hopefully we'll be able to do something cool. He said no file system stuff. I will try to come up with some rudimentary ideas in the interim. NOTE: Jeeho asked Sami and I to collect people's opinions on A3, whether its feasible, etc.
-
-
-# Problem Statement
-Stanford's PintOS assignment: [2.2.4](https://web.stanford.edu/class/cs140/projects/pintos/pintos_2.html#SEC27)
 
 # Acceptance Criteria
 There are a lot of MLFQS tests, we can run them all but most pertinently there are separate ones to test separate functionalities. For example, there's one that will test load_avgs to make sure they're correct, one that will test recent_cpus to make sure they are correct, and then ofc one that tests the entire thing for all requirements. Will add to this section after I read the tests in more detail.
