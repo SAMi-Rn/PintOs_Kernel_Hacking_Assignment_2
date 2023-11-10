@@ -52,6 +52,9 @@ NOTE: As apart of the above requirement, we have to implement the following meth
 
     <div style="text-align:center"><img src="recent_cpu_equation.png"/></div>
 
+4. Finally, implement the dynamic priority in timer_interrupt so that on every fourth tick, we iterate through all threads and update each priority with the following equation:
+![Alt text](prio_equation.png)
+
 At this point, if all of the above requirements are met, we have a functioning MLFQS. 
 
 
