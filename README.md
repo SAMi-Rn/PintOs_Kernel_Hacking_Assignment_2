@@ -33,12 +33,12 @@ MLFQS works by dynamically recalculating the priorities of every thread every fo
 
 1. We must implement helper functions that let us do [Fixed-Point Real Arithmetic](https://web.stanford.edu/class/cs140/projects/pintos/pintos_7.html#SEC137). This, to me atleast, seems the hardest part of the assignment. The rest is just procedural and might cause issues w.r.t. debugging but that's it. 
 
-2. Modify the thread struct found in thread.h to have the field "nice." In the thread_create function, initialize the niceness to either zero or the same as its parent thread. Additionally, there exist method stubs for the following functions in thread.c (we must implement them):
+2. Modify the thread struct found in thread.h to have the field "nice." In the thread_create function, initialize the niceness to either zero or the same as its parent thread. This determines how "nice" the process is so it either gives up CPU time or takes it up accordingly. Additionally, there exist method stubs for the following functions in thread.c (we must implement them):
     - Function: int thread_get_nice (void)
         - Returns the current thread's nice value. 
     - Function: void thread_set_nice (int new_nice)
         - Sets the current thread's nice value to new_nice and recalculates the thread's priority based on the new value. If the running thread no longer has the highest priority, yields. 
-3. Create a new global integer variable "load_avg" that is assigned to 0 at OS boot. 
+3. Create a new global variable "load_avg" that is assigned to 0 at OS boot. 
     - Modify timer_interrupt, or thread_tick, to recalculate it every second (or in other words every time that timer_ticks () % TIMER_FREQ == 0), using the below formula: 
      <div style="text-align:center"><img src="load_avg_equation.png"/></div> 
 NOTE: As apart of the above requirement, we have to implement the following method stub in thread.c:
