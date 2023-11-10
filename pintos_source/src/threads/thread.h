@@ -24,6 +24,11 @@ typedef int tid_t;
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
 
+
+// sleeping threads list
+struct list_elem sleeping_elem; 
+// tick count     
+long long ticks_to_wakeup;          
 /* A kernel thread or user process.
 
    Each thread structure is stored in its own 4 kB page.  The
@@ -89,9 +94,11 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
-    struct list_elem sleeping_elem;     /* List element for sleeping threads list. */
-    long long ticks_to_wakeup;          /* tick count this thread should wake up on (if slept). */
 
+
+
+   int64_t ticks_to_wakeup;
+   struct list_elem sleeping_elem;
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
@@ -108,7 +115,7 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
-
+void thread_sleep(int64_t ticks_to_sleep);
 void thread_init (void);
 void thread_start (void);
 

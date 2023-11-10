@@ -89,13 +89,17 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks) 
 {
-  enum intr_level old_level;
   int64_t start = timer_ticks ();
+
+
+
+  enum intr_level old_level;
+  ASSERT (intr_get_level () == INTR_ON);
   int64_t ticks_to_sleep = start + ticks;
-  old_level = intr_disable();  
-  if (timer_elapsed(start) < ticks)
-    thread_sleep(ticks_to_sleep); // have to move code into thread.c, can't access
-                                        // lists, idle_thread, etc. otherwise
+  old_level = intr_disable();
+  if (timer_elapsed(start) < ticks){ 
+    thread_sleep(ticks_to_sleep); 
+     }
   intr_set_level(old_level);
 }
 
@@ -174,7 +178,6 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
-  // printf("ticks: %lli\n");
   thread_tick ();
   wake_up_threads(ticks);
 }
