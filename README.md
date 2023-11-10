@@ -17,7 +17,7 @@ The current scheduler in PintOS is Round Robin, this is good as it is required f
 1. thread_tick() -- line 131, thread.c -- calls inter_yield_on_turn() every time our time quantum happens.
     - NOTE: by default (declared in timer.h) there are 100 OS ticks per second. Can lower the number of ticks for debugging purposes. Default TIME_SLICE is 4 ticks aka every 2.4s.
 2. intr_yield_on_return() flags the scheduler to call thread_yield() as soon as the tick_interrupt handler returns execution.
-3. thread_yield() -- line 310, thread.c -- grabs the current thread's status to READY and moves it to the end of the queue before calling schedule().
+3. thread_yield() -- line 310, thread.c -- changes the current thread's status to READY and moves it to the end of the queue before calling schedule().
 
 I highlight this flow-of-control to show the default thread scheduling as we have to modify it. For example, we will have to change thread_yield() such that it properly appends threads to the end of its respective queue (i.e. correct priority) in our MLFQS implementation. This will be qualified further below.
 
