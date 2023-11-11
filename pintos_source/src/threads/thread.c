@@ -181,37 +181,60 @@ thread_start (void)
   sema_down (&idle_started);
 }
 
+void calculate_priority(struct thread *t) {
+  t->priority = PRI_MAX - DIVIDE_INTEGER(t->mlfqs_info.recent_cpu, 4) - (t->mlfqs_info.nice * 2);
+}
+
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
 thread_tick (int os_ticks) 
 {
   struct thread *t = thread_current ();
+  int ready_threads = list_size(&ready_list) + 1; // 1 for the currently running thread.
+
 
   /* Update statistics. */
-  if (t == idle_thread)
+  if (t == idle_thread) {
     idle_ticks++;
+    ready_threads--; // there is no running thread, it is the idle thread
+  }
 #ifdef USERPROG
   else if (t->pagedir != NULL)
     user_ticks++;
 #endif
   else
     kernel_ticks++;
+  
+  if (thread_mlfqs) {
+    // recalculate load average and recent_cpus of all threads.
+    if (os_ticks % 100 == 0) {
+      int coeff1 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(59), CONVERT_TO_FIXED_POINT(60));
+      int coeff2 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(1), CONVERT_TO_FIXED_POINT(60));
+      load_avg = MULTIPLY_FIXED_POINT(coeff1, load_avg) + MULTIPLY_FIXED_POINT(coeff2, ready_threads);
+      // TODO: loop through each thread in the PQ and set 
 
-  if (os_ticks % DYNAMIC_PRIORITY_QUANTUM == 0)
-    ; // TODO during integration w/ delaine's priority queue code.
+      struct list_elem *e;
 
-  // recalculate load average and recent_cpus of all threads.
-  if (os_ticks % 100 == 0) {
-    int coeff1 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(59), CONVERT_TO_FIXED_POINT(60));
-    int coeff2 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(1), CONVERT_TO_FIXED_POINT(60));
-    // TODO: finish implementing this after PQ. load_avg = coeff1 * load_avg + coeff * num_threads_that_are_ready;
-    // TODO: loop through each thread in the PQ and set 
-    for (e = list_begin (&all_list); e != list_end (&all_list) {
-    recent_cpu = MULTIPLY_INTEGER(recent_cpu, 2) / (MULTIPLY_INTEGER(recent_cpu, 2) + 1) * recent_cpu + th->nice;
+      for (e = list_begin (&ready_list); e != list_end (&ready_list); e = list_next (e))
+      {
+        struct thread *t = list_entry (e, struct thread, elem);
+        int recent_cpu = t->mlfqs_info.recent_cpu;
+        int nice = t->mlfqs_info.nice;
+        t->mlfqs_info.recent_cpu = MULTIPLY_INTEGER(load_avg, 2) / (MULTIPLY_INTEGER(load_avg, 2) + 1) * recent_cpu + nice;
+        calculate_priority(t);
+      }
+    }
+
+    if (os_ticks % DYNAMIC_PRIORITY_QUANTUM == 0) {
+      struct list_elem *e;
+      for (e = list_begin (&ready_list); e != list_end (&ready_list); e = list_next (e))
+      {
+        struct thread *t = list_entry (e, struct thread, elem);
+        calculate_priority(t);
+      }
+    }
   }
-
-
 
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)

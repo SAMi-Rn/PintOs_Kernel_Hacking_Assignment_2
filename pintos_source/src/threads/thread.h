@@ -128,6 +128,7 @@ void thread_sleep(int64_t ticks_to_sleep);
 void thread_init (void);
 void thread_start (void);
 
+void calculate_priority(struct thread *t);
 void thread_tick (int os_ticks);
 void thread_print_stats (void);
 
