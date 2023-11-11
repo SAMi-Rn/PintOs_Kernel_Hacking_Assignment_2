@@ -94,8 +94,8 @@ struct thread
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
     struct list_elem allelem;           /* List element for all threads list. */
-
-
+    int recent_cpu;                    /* recent_cpu usage used for MLQFS for dynamic prioritization (fixed-point value) */
+    int nice;                          /* niceness value i.e. how this thread's priority should be specially affected */
 
    int64_t ticks_to_wakeup;
    struct list_elem sleeping_elem;
@@ -119,7 +119,7 @@ void thread_sleep(int64_t ticks_to_sleep);
 void thread_init (void);
 void thread_start (void);
 
-void thread_tick (void);
+void thread_tick (int os_ticks);
 void thread_print_stats (void);
 
 typedef void thread_func (void *aux);

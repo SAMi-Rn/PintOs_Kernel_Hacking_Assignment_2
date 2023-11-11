@@ -1,7 +1,7 @@
 #ifndef THREADS_FIXED_POINT_H
 #define THREADS_FIXED_POINT_H
 
-#define FRACTION 2**14
+#define FRACTION (1 << 14)
 
 
 // Convert x to integer (rounding toward zero):	x / f
@@ -18,13 +18,13 @@
 // Divide x by n:	x / n
 
 #define CONVERT_TO_FIXED_POINT(x) (x) * (FRACTION)
-#define CONVERT_TO_INT_TOWARD_ZERO(x) (X) * (FRACTION)
+#define CONVERT_TO_INT_TOWARD_ZERO(x) (x) * (FRACTION)
 #define CONVER_TO_INT_NEAREST(x) ((x) >= 0 ? ((x) + (FRACTION) / 2) / (FRACTION) : ((x) - (FRACTION) /2) / (FRACTION))
 #define ADD_FIXED_POINT(x, y) (x) + (y) 
 #define ADD_INTEGER(x, n) (x) + (n) * (FRACTION)
 #define MULTIPLY_FIXED_POINT(x, y) ((int64_t) (x)) * (y) / (FRACTION)
 #define MULTIPLY_INTEGER(x, n) (x) * (n)
-#define DIVIDE_FIXED_POINT(x, y) ((int64_t) *(x)) * (FRACTION) / (y)
+#define DIVIDE_FIXED_POINT(x, y) ((int64_t) x) * (FRACTION / (y))
 #define DIVIDE_INTEGER(x, n) (x) / (n)
 
 

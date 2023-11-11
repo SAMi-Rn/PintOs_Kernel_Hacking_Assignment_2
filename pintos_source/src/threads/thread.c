@@ -11,6 +11,7 @@
 #include "threads/switch.h"
 #include "threads/synch.h"
 #include "threads/vaddr.h"
+#include "threads/fixed_point.h"
 #ifdef USERPROG
 #include "userprog/process.h"
 #endif
@@ -52,9 +53,13 @@ static long long idle_ticks;    /* # of timer ticks spent idle. */
 static long long kernel_ticks;  /* # of timer ticks in kernel threads. */
 static long long user_ticks;    /* # of timer ticks in user programs. */
 
+
+static long long load_avg;      /* moving average of the number of threads ready to run. */
+
 /* Scheduling. */
-#define TIME_SLICE 4            /* # of timer ticks to give each thread. */
-static unsigned thread_ticks;   /* # of timer ticks since last yield. */
+#define TIME_SLICE 4                /* # of timer ticks to give each thread. */
+#define DYNAMIC_PRIORITY_QUANTUM 4 /* # of timer ticks before recalculating every thread's priority. */
+static unsigned thread_ticks;     /* # of timer ticks since last yield. */
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -179,7 +184,7 @@ thread_start (void)
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
-thread_tick (void) 
+thread_tick (int os_ticks) 
 {
   struct thread *t = thread_current ();
 
@@ -192,6 +197,21 @@ thread_tick (void)
 #endif
   else
     kernel_ticks++;
+
+  if (os_ticks % DYNAMIC_PRIORITY_QUANTUM == 0)
+    ; // TODO during integration w/ delaine's priority queue code.
+
+  // recalculate load average and recent_cpus of all threads.
+  if (os_ticks % 100 == 0) {
+    int coeff1 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(59), CONVERT_TO_FIXED_POINT(60));
+    int coeff2 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(1), CONVERT_TO_FIXED_POINT(60));
+    // TODO: finish implementing this after PQ. load_avg = coeff1 * load_avg + coeff * num_threads_that_are_ready;
+    // TODO: loop through each thread in the PQ and set 
+    for (e = list_begin (&all_list); e != list_end (&all_list) {
+    recent_cpu = MULTIPLY_INTEGER(recent_cpu, 2) / (MULTIPLY_INTEGER(recent_cpu, 2) + 1) * recent_cpu + th->nice;
+  }
+
+
 
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
