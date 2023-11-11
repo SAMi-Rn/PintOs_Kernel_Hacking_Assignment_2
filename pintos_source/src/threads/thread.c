@@ -181,38 +181,25 @@ thread_start (void)
   sema_down (&idle_started);
 }
 
-void calculate_priority(struct thread *t) {
-  t->priority = PRI_MAX - DIVIDE_INTEGER(t->mlfqs_info.recent_cpu, 4) - (t->mlfqs_info.nice * 2);
+int calculate_priority(struct thread *t) {
+  return CONVERT_TO_INT_NEAREST(PRI_MAX - DIVIDE_INTEGER(t->mlfqs_info.recent_cpu, 4) - (t->mlfqs_info.nice * 2));
 }
 
-/* Called by the timer interrupt handler at each timer tick.
-   Thus, this function runs in an external interrupt context. */
 void
-thread_tick (int os_ticks) 
-{
-  struct thread *t = thread_current ();
-  int ready_threads = list_size(&ready_list) + 1; // 1 for the currently running thread.
-
-
-  /* Update statistics. */
-  if (t == idle_thread) {
-    idle_ticks++;
-    ready_threads--; // there is no running thread, it is the idle thread
-  }
-#ifdef USERPROG
-  else if (t->pagedir != NULL)
-    user_ticks++;
-#endif
-  else
-    kernel_ticks++;
-  
-  if (thread_mlfqs) {
+mlfqs_tick (int os_ticks) {
+  if (thread_mlfqs) { // maybe i just make this false, verify it isn't running{
+    struct thread *t = thread_current ();
+    int ready_threads = list_size(&ready_list) + 1;
+    /* Update statistics. */
+    if (t == idle_thread)
+      ready_threads--;
+    else
+      t->mlfqs_info.recent_cpu++;
     // recalculate load average and recent_cpus of all threads.
     if (os_ticks % 100 == 0) {
       int coeff1 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(59), CONVERT_TO_FIXED_POINT(60));
       int coeff2 = DIVIDE_FIXED_POINT(CONVERT_TO_FIXED_POINT(1), CONVERT_TO_FIXED_POINT(60));
       load_avg = MULTIPLY_FIXED_POINT(coeff1, load_avg) + MULTIPLY_FIXED_POINT(coeff2, ready_threads);
-      // TODO: loop through each thread in the PQ and set 
 
       struct list_elem *e;
 
@@ -222,20 +209,40 @@ thread_tick (int os_ticks)
         int recent_cpu = t->mlfqs_info.recent_cpu;
         int nice = t->mlfqs_info.nice;
         t->mlfqs_info.recent_cpu = MULTIPLY_INTEGER(load_avg, 2) / (MULTIPLY_INTEGER(load_avg, 2) + 1) * recent_cpu + nice;
-        calculate_priority(t);
       }
     }
 
     if (os_ticks % DYNAMIC_PRIORITY_QUANTUM == 0) {
+      if (t != idle_thread)
+        thread_set_priority(calculate_priority(t));
+
       struct list_elem *e;
       for (e = list_begin (&ready_list); e != list_end (&ready_list); e = list_next (e))
       {
         struct thread *t = list_entry (e, struct thread, elem);
-        calculate_priority(t);
+        t->priority = calculate_priority(t);
       }
     }
   }
+}
 
+/* Called by the timer interrupt handler at each timer tick.
+   Thus, this function runs in an external interrupt context. */
+void
+thread_tick (void) 
+{
+  struct thread *t = thread_current ();
+  /* Update statistics. */
+  if (t == idle_thread)
+    idle_ticks++;
+
+#ifdef USERPROG
+  else if (t->pagedir != NULL)
+    user_ticks++;
+#endif
+  else
+    kernel_ticks++;
+  
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
     intr_yield_on_return ();
@@ -512,7 +519,7 @@ int
 thread_get_load_avg (void) 
 {
   /* Not yet implemented. */
-  return 0;
+  return MULTIPLY_INTEGER(load_avg, 100);
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
@@ -520,7 +527,7 @@ int
 thread_get_recent_cpu (void) 
 {
   /* Not yet implemented. */
-  return 0;
+  return MULTIPLY_INTEGER(thread_current()->mlfqs_info.recent_cpu, 100);
 }
 
 /* Idle thread.  Executes when no other thread is ready to run.

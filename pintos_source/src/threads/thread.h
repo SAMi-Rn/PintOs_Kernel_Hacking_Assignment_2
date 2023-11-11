@@ -128,8 +128,9 @@ void thread_sleep(int64_t ticks_to_sleep);
 void thread_init (void);
 void thread_start (void);
 
-void calculate_priority(struct thread *t);
-void thread_tick (int os_ticks);
+int calculate_priority(struct thread *t);
+void mlfqs_tick (int os_ticks);
+void thread_tick (void);
 void thread_print_stats (void);
 
 typedef void thread_func (void *aux);

@@ -19,7 +19,7 @@
 
 #define CONVERT_TO_FIXED_POINT(x) (x) * (FRACTION)
 #define CONVERT_TO_INT_TOWARD_ZERO(x) (x) * (FRACTION)
-#define CONVER_TO_INT_NEAREST(x) ((x) >= 0 ? ((x) + (FRACTION) / 2) / (FRACTION) : ((x) - (FRACTION) /2) / (FRACTION))
+#define CONVERT_TO_INT_NEAREST(x) ((x) >= 0 ? ((x) + (FRACTION) / 2) / (FRACTION) : ((x) - (FRACTION) /2) / (FRACTION))
 #define ADD_FIXED_POINT(x, y) (x) + (y) 
 #define ADD_INTEGER(x, n) (x) + (n) * (FRACTION)
 #define MULTIPLY_FIXED_POINT(x, y) ((int64_t) (x)) * (y) / (FRACTION)
