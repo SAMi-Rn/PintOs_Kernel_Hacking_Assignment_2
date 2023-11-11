@@ -442,6 +442,13 @@ thread_get_base_priority (void)
     return thread_current ()->base_priority;
 }
 
+// Initialize MLFQS-specific information for a new thread
+static void
+init_mlfqs_info(struct thread *t) {
+    t->mlfqs_info.recent_cpu = 0;
+    t->mlfqs_info.nice = 0;
+}
+
 /* Sets the current thread's nice value to NICE. */
 void
 thread_set_nice (int nice UNUSED) 
@@ -561,7 +568,8 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->base_priority = priority;
   t->magic = THREAD_MAGIC;
-
+  // Initialize MLFQS-specific information
+  init_mlfqs_info(t);
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
   intr_set_level (old_level);
@@ -681,3 +689,18 @@ allocate_tid (void)
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
 
+// Function to age threads in the system
+void
+mlfqs_thread_aging(void)
+{
+    struct list_elem *e;
+    for (e = list_begin (&all_list); e != list_end (&all_list); e = list_next (e)) {
+        struct thread *t = list_entry (e, struct thread, allelem);
+
+        // Increase priority or other aging-related updates
+        // ...
+
+        // Update recent_cpu or other aging-related updates
+        // ...
+    }
+}

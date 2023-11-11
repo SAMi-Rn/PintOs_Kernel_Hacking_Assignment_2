@@ -29,7 +29,14 @@ typedef int tid_t;
 // sleeping threads list
 struct list_elem sleeping_elem; 
 // tick count     
-long long ticks_to_wakeup;          
+long long ticks_to_wakeup;
+
+// Define a data structure for MLFQS-specific information for each thread
+struct mlfqs_info {
+    int recent_cpu;   // Recent CPU usage (fixed-point)
+    int nice;          // Niceness value
+};
+
 /* A kernel thread or user process.
 
    Each thread structure is stored in its own 4 kB page.  The
@@ -96,7 +103,7 @@ struct thread
     int priority;                       /* Priority. */
     int base_priority;                  /* Original priority before MLFQ changes. */
     struct list_elem allelem;           /* List element for all threads list. */
-
+    struct mlfqs_info mlfqs_info;       /* MLFQS-specific information. */
 
 
    int64_t ticks_to_wakeup;
@@ -152,5 +159,6 @@ int thread_get_load_avg (void);
 
 bool compare_wakeup_ticks(const struct list_elem *thread_a, const struct list_elem *thread_b, void *aux UNUSED);
 void wake_up_threads(int64_t current_ticks);
-
+void init_mlfqs_info(struct thread *t);
+void mlfqs_thread_aging(void);
 #endif /* threads/thread.h */
