@@ -443,7 +443,7 @@ thread_get_base_priority (void)
 }
 
 // Initialize MLFQS-specific information for a new thread
-static void
+void
 init_mlfqs_info(struct thread *t) {
     t->mlfqs_info.recent_cpu = 0;
     t->mlfqs_info.nice = 0;
@@ -695,7 +695,7 @@ mlfqs_thread_aging(void)
 {
     struct list_elem *e;
     for (e = list_begin (&all_list); e != list_end (&all_list); e = list_next (e)) {
-        struct thread *t = list_entry (e, struct thread, allelem);
+        //  struct thread *t = list_entry (e, struct thread, allelem);
 
         // Increase priority or other aging-related updates
         // ...
