@@ -390,11 +390,42 @@ thread_foreach (thread_action_func *func, void *aux)
     }
 }
 
+// Helper function to compare priorities in the ready list
+static bool compare_priorities(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
+    struct thread *thread_a = list_entry(a, struct thread, elem);
+    struct thread *thread_b = list_entry(b, struct thread, elem);
+    return thread_a->priority < thread_b->priority;
+}
+
+// Helper function to find the maximum priority in the ready list
+static int get_max_priority_in_ready_list(void) {
+    if (list_empty(&ready_list)) {
+        return INT_MIN;  // Assuming priorities are integers
+    } else {
+        struct list_elem *max_elem = list_max(&ready_list, compare_priorities, NULL);
+        struct thread *max_thread = list_entry(max_elem, struct thread, elem);
+        return max_thread->priority;
+    }
+}
+
 /* Sets the current thread's priority to NEW_PRIORITY. */
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
+    enum intr_level old_level = intr_disable();
+
+    // Clamp the new priority to the valid range
+    new_priority = (new_priority < PRI_MIN) ? PRI_MIN : (new_priority > PRI_MAX) ? PRI_MAX : new_priority;
+
+    // Update the current priority
+    thread_current()->priority = new_priority;
+
+    // Yield if the new priority is not the highest in the ready queue
+    if (!list_empty(&ready_list) && new_priority < get_max_priority_in_ready_list()) {
+        thread_yield();
+    }
+
+    intr_set_level(old_level);
 }
 
 /* Returns the current thread's priority. */
@@ -402,6 +433,13 @@ int
 thread_get_priority (void) 
 {
   return thread_current ()->priority;
+}
+
+/* Returns the current thread's base priority. */
+int
+thread_get_base_priority (void)
+{
+    return thread_current ()->base_priority;
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -521,6 +559,7 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
+  t->base_priority = priority;
   t->magic = THREAD_MAGIC;
 
   old_level = intr_disable ();
