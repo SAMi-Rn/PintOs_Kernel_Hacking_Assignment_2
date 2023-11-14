@@ -4,7 +4,7 @@
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
-#include <limits.h>
+#include "fixed_point.h"
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -24,18 +24,6 @@ typedef int tid_t;
 #define PRI_MIN 0                       /* Lowest priority. */
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
-
-
-// sleeping threads list
-struct list_elem sleeping_elem; 
-// tick count     
-long long ticks_to_wakeup;
-
-// Define a data structure for MLFQS-specific information for each thread
-struct mlfqs_info {
-    int recent_cpu;   // Recent CPU usage (fixed-point)
-    int nice;          // Niceness value
-};
 
 /* A kernel thread or user process.
 
@@ -93,6 +81,7 @@ struct mlfqs_info {
    only because they are mutually exclusive: only a thread in the
    ready state is on the run queue, whereas only a thread in the
    blocked state is on a semaphore wait list. */
+extern bool thread_mlfqs;
 struct thread
   {
     /* Owned by thread.c. */
@@ -101,13 +90,11 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
-    int base_priority;                  /* Original priority before MLFQ changes. */
-    struct list_elem allelem;           /* List element for all threads list. */
-    struct mlfqs_info mlfqs_info;       /* MLFQS-specific information. */
 
 
-   int64_t ticks_to_wakeup;
-   struct list_elem sleeping_elem;
+    /* My Implementation. */
+    struct list_elem allelem;          
+
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
 
@@ -118,18 +105,28 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+    
+	
+
+
+   /* My Implementation. */
+	struct list_elem sleep_element;  
+   struct list held_lock;             
+	struct lock *curr_lock;       
+	int our_priority;                   
+	int nice;     
+   int64_t remaining_time;                      
+	fixed_point recent_cpu;                 
   };
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
-extern bool thread_mlfqs;
-void thread_sleep(int64_t ticks_to_sleep);
+
+
 void thread_init (void);
 void thread_start (void);
 
-int calculate_priority(struct thread *t);
-void mlfqs_tick (int os_ticks);
 void thread_tick (void);
 void thread_print_stats (void);
 
@@ -152,15 +149,21 @@ void thread_foreach (thread_action_func *, void *);
 
 int thread_get_priority (void);
 void thread_set_priority (int);
-int thread_get_base_priority (void);
 
 int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
-bool compare_wakeup_ticks(const struct list_elem *thread_a, const struct list_elem *thread_b, void *aux UNUSED);
-void wake_up_threads(int64_t current_ticks);
-void init_mlfqs_info(struct thread *t);
-void mlfqs_thread_aging(void);
+
+/* My Implementation */
+void check_thread_yield (void);
+void tick_every_second (void);
+void set_sleeping_thread (int64_t);
+void update_thread (struct thread *);
+void rearrange_ready_list (struct thread *);
+void thread_update_recent_cpu(struct thread *, void *);
+void thread_update_priority_mlfqs(struct thread *);
+bool compare_threads (const struct list_elem *, const struct list_elem *, void *);
+
 #endif /* threads/thread.h */
