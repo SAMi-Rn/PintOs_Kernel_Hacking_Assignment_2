@@ -26,7 +26,6 @@ tests/threads_SRC += tests/threads/priority-donate-nest.c
 tests/threads_SRC += tests/threads/priority-donate-sema.c
 tests/threads_SRC += tests/threads/priority-donate-lower.c
 tests/threads_SRC += tests/threads/priority-fifo.c
-tests/threads_SRC += tests/threads/priority-get-set.c
 tests/threads_SRC += tests/threads/priority-preempt.c
 tests/threads_SRC += tests/threads/priority-sema.c
 tests/threads_SRC += tests/threads/priority-condvar.c

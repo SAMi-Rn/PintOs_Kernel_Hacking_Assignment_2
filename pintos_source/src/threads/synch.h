@@ -22,6 +22,10 @@ struct lock
   {
     struct thread *holder;      /* Thread holding lock (for debugging). */
     struct semaphore semaphore; /* Binary semaphore controlling access. */
+
+    /* My Implementation */
+	  struct list_elem elem;      
+	  int max_p;           
   };
 
 void lock_init (struct lock *);
@@ -47,5 +51,13 @@ void cond_broadcast (struct condition *, struct lock *);
    optimization barrier.  See "Optimization Barriers" in the
    reference guide for more information.*/
 #define barrier() asm volatile ("" : : : "memory")
+
+
+/* My Implementation */
+struct thread * sema_get_max (struct semaphore *);
+void lock_update (struct lock *);
+bool compare_locks (const struct list_elem *, const struct list_elem *, void *);							
+bool compare_sema_elem (const struct list_elem *, const struct list_elem *, void *);
+
 
 #endif /* threads/synch.h */
