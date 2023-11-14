@@ -66,5 +66,5 @@ There are a lot of MLFQS tests, we can run them all but most pertinently there a
 
 # All tests have been passed
 
-recent_cpu<img width="543" alt="Screenshot 2023-11-14 at 12 30 22 AM" src="https://github.com/imnorookie/COMP_7035_Kernel_Hacking_A2/assets/108373193/5d1f4279-10b5-4b14-b096-ba6e75d99ffa">
+<img width="543" alt="Screenshot 2023-11-14 at 12 30 22 AM" src="https://github.com/imnorookie/COMP_7035_Kernel_Hacking_A2/assets/108373193/5d1f4279-10b5-4b14-b096-ba6e75d99ffa">
 
