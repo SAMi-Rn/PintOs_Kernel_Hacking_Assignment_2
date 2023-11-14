@@ -62,4 +62,9 @@ At this point, if all of the above requirements are met, we have a functioning M
 Sometime around when we hand in this assignment, we need to meet and come up with potential ideas for A3. Semester is really busy, but hopefully we'll be able to do something cool. He said no file system stuff. I will try to come up with some rudimentary ideas in the interim. NOTE: Jeeho asked Sami and I to collect people's opinions on A3, whether its feasible, etc.
 
 # Acceptance Criteria
-There are a lot of MLFQS tests, we can run them all but most pertinently there are separate ones to test separate functionalities. For example, there's one that will test load_avgs to make sure they're correct, one that will test recent_cpus to make sure they are correct, and then ofc one that tests the entire thing for all requirements. Will add to this section after I read the tests in more detail.
+There are a lot of MLFQS tests, we can run them all but most pertinently there are separate ones to test separate functionalities. For example, there's one that will test load_avgs to make sure they're correct, one that will tests to make sure they are correct, and then ofc one that tests the entire thing for all requirements. Will add to this section after I read the tests in more detail.
+
+# All tests have been passed
+
+recent_cpu<img width="543" alt="Screenshot 2023-11-14 at 12 30 22 AM" src="https://github.com/imnorookie/COMP_7035_Kernel_Hacking_A2/assets/108373193/5d1f4279-10b5-4b14-b096-ba6e75d99ffa">
+
