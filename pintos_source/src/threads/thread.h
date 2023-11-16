@@ -90,8 +90,6 @@ struct thread
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
     int priority;                       /* Priority. */
-
-
     /* My Implementation. */
     struct list_elem allelem;          
 
@@ -105,17 +103,13 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
-    
-	
-
-
-   /* My Implementation. */
-	struct list_elem sleep_element;  
-   struct list held_lock;             
+    /* My Implementation. */
+	struct list_elem sleep_element;
+    struct list held_lock;
 	struct lock *curr_lock;       
 	int our_priority;                   
-	int nice;     
-   int64_t remaining_time;                      
+	int nice;
+    int64_t remaining_time;
 	fixed_point recent_cpu;                 
   };
 
