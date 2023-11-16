@@ -361,7 +361,6 @@ cond_wait (struct condition *cond, struct lock *lock)
   
   sema_init (&waiter.semaphore, 0);
 
-  /* My Implementation */
   waiter.priority = thread_get_priority ();
   list_insert_ordered (&cond->waiters, &waiter.elem, compare_sema_elem, NULL);
 

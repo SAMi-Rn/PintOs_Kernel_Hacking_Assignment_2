@@ -173,7 +173,6 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
-  /* My implementation */
   if (thread_mlfqs && ticks % TIMER_FREQ == 0)
     tick_every_second ();
   thread_tick ();  

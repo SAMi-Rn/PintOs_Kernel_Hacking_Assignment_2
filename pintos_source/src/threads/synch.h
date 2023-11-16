@@ -52,8 +52,6 @@ void cond_broadcast (struct condition *, struct lock *);
    reference guide for more information.*/
 #define barrier() asm volatile ("" : : : "memory")
 
-
-/* My Implementation */
 struct thread * sema_get_max (struct semaphore *);
 void lock_update (struct lock *);
 bool compare_locks (const struct list_elem *, const struct list_elem *, void *);							

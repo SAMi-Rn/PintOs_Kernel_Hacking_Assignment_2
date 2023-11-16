@@ -150,7 +150,6 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 
 
-/* My Implementation */
 void check_thread_yield (void);
 void tick_every_second (void);
 void set_sleeping_thread (int64_t);
