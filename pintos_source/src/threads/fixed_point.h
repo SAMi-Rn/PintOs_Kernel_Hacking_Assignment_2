@@ -30,6 +30,4 @@ typedef int fixed_point;
 #define DIVIDE_FIXED_POINT(x,y) (x / y)
 #define DIVIDE_INTEGER(x,n) ((fixed_point)((((int64_t) x) << FRACTION) / n))
 
-
-
 #endif /* thread/fixed_point.h */
