@@ -1,7 +1,7 @@
 # PintOs Kernel Hacking Assignment 2(Team #7)
 
 ## Overview
-We implemented Stanford's Advanced Scheduler (section 2.2.4 of the Operating Systems textbook) for PintOS, specifically a multilevel feedback queue scheduler (MLFQS). This complex feature required deep understanding and modification of PintOS's original Round Robin scheduler.
+This project is an integral component of COMP_7035_OS_Assignment2, in which we have successfully implemented the multilevel feedback queue scheduler (MLFQS), as described in Stanford's PintOS specifications, section 2.2.4. We aimed to integrate an advanced process scheduling system into the Pintos Operating System. The goal was to transition from a simplistic round-robin scheduler to a more sophisticated scheduler that dynamically adjusts thread priorities, efficiently distributes processor time, and prevents priority inversion. This endeavour necessitated an in-depth analysis of the existing PintOS codebase and a thorough understanding of complex scheduling algorithms as detailed in Stanford's literature and the original BSD Unix system. The outcome is a Pintos system that is more equitable, efficient, and capable of handling diverse processing tasks with agility and fairness.
 
 ## Problem Statement
 Our task was to address Stanford's PintOS assignment, detailed in section [2.2.4](https://web.stanford.edu/class/cs140/projects/pintos/pintos_2.html#SEC27), and prerequisite priority scheduling described in [2.2.3](https://web.stanford.edu/class/cs140/projects/pintos/pintos_2.html#SEC26).
