@@ -40,4 +40,3 @@ Our acceptance of the project was based on passing all tests provided by the Sta
 ``` sh
 https://youtu.be/jip-EQH7RGc?si=MrcTyuzUzQGSTzvD
 ```
-
